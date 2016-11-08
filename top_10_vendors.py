@@ -3,9 +3,6 @@ from operator import itemgetter
 from optparse import OptionParser
 
 def get_vendor_amounts(file_name):
-	if file_name is None:
-		raise ValueError("file_name cannot be None")
-
 	vendor_amounts = {}
 	with open(file_name, 'rb') as checkbook:
 		checkbook_reader = DictReader(checkbook)
@@ -18,19 +15,11 @@ def get_vendor_amounts(file_name):
 	return vendor_amounts
 
 def get_top_ten_va(vendor_amounts):
-	if vendor_amounts is None:
-		raise ValueError("vendor_amounts cannot be None")
-
 	sorted_vendor_amounts = sorted(vendor_amounts.items(), key=itemgetter(1), reverse=True)
 	return sorted_vendor_amounts[:10]
 
 
 def write_top_ten(file_name, top_ten):
-	if file_name is None:
-		raise ValueError("file_name cannot be None")
-	if top_ten is None:
-		raise ValueError("top_ten cannot be None")
-
 	with open(file_name, 'wb') as va_file:
 		va_writer = writer(va_file, delimiter=',')
 
@@ -39,11 +28,6 @@ def write_top_ten(file_name, top_ten):
 			va_writer.writerow(va)
 
 def main(in_file_name, out_file_name):
-	if in_file_name is None:
-		raise ValueError("file_name cannot be None")
-	if out_file_name is None:
-		raise ValueError("out_file_name cannot be None")
-
 	vendor_amounts = get_vendor_amounts(in_file_name)
 	top_ten = get_top_ten_va(vendor_amounts)
 	write_top_ten(out_file_name, top_ten)
@@ -54,5 +38,11 @@ if __name__ == '__main__':
 	parser.add_option('-o', '--outfile', dest='out_file_name')
 
 	(options, args) = parser.parse_args()
+
+	if options.in_file_name is None:
+		raise ValueError("Input file name cannot be None. Please set -i option.")
+
+	if options.out_file_name is None:
+		raise ValueError("Output file name cannot be None. Please set -o option.")
 
 	main(options.in_file_name, options.out_file_name)
